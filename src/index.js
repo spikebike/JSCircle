@@ -2,7 +2,7 @@ var canvas;
 var ctx;
 var width;
 var height;
-var pointSize = 1;
+var pointSize = 3;
 var angleStep = (2 * Math.PI) / 60; // 60 points per circle
 
 drawCircle(200);
