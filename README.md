@@ -1,2 +1,0 @@
-# JSCircle
-Created with CodeSandbox
