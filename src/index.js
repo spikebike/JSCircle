@@ -1,70 +1,60 @@
+
 var canvas;
 var ctx;
 var width;
 var height;
 var pointSize = 1;
-var lookupResolution = 1;
-var DEBUG = false;
+var angleStep = (2 * Math.PI) / 36; // 36 points per circle
 
 drawCircle(200);
 
 function drawCircle(radius) {
   // allocate array?
   // build sqRoot lookup array
-  var sqRoot = {};
+  var angle = 0.0;
   var x = 0.0;
-  var radiusSq = radius * radius;
-  var t0 = performance.now();
-
-  while (x < radius) {
-    // Using Number.parseFloat().toFixed() to work around javascript's fp weakness.
-    var xSquared = Number.parseFloat(x * x).toFixed(2);
-    if (DEBUG === true) {
-      console.log("sqRoot[" + xSquared + "] = " + x);
-    }
-    sqRoot[xSquared] = x;
-    x = x + lookupResolution;
-  }
+  var y = 0.0;
   var t1 = performance.now();
 
-  x = 0;
   initGraphics();
   ctx.fillStyle = "rgb(30, 30, 30)";
   PlotAxis();
   ctx.fillStyle = "rgb(255, 30, 30)";
-
-  var y = 0;
-  var lookupMisses = 0;
-  var lookupHits = 0;
-
-  while (x < radius) {
-    var ySquared = Number.parseFloat(radiusSq - x * x).toFixed(2);
-    // var ySquared = radiusSq - x * x;
-    y = sqRoot[ySquared];
-    if (y === undefined) {
-      lookupMisses++;
-    } else {
-      lookupHits++;
-    }
-    if (DEBUG === true) {
-      console.log("looking for sqRoot[" + ySquared + ": " + y);
-    }
-    // optimization - refine x increment based on diff in y
+  // draw 1/8th of a cicrle then plot the other 7 symmetric points
+  while (angle < Math.PI / 4) {
+    y = lsign(angle) * radius;
+    // cos (x) = sin(x+PI/2);
+    x = lsign(angle + Math.PI / 2) * radius;
     PlotPixel(width / 2 + x, height / 2 + y);
     PlotPixel(width / 2 - x, height / 2 + y);
     PlotPixel(width / 2 - x, height / 2 - y);
     PlotPixel(width / 2 + x, height / 2 - y);
-
-    x = x + 0.1;
+    PlotPixel(width / 2 + y, height / 2 + x);
+    PlotPixel(width / 2 - y, height / 2 + x);
+    PlotPixel(width / 2 - y, height / 2 - x);
+    PlotPixel(width / 2 + y, height / 2 - x);
+    angle = angle + angleStep;
   }
   var t2 = performance.now();
   console.log("done.");
-  console.log("Buidling lookup table: " + (t1 - t0) + "ms");
   console.log("Rendering circle: " + (t2 - t1) + "ms");
-  console.log("Lookup hits: " + lookupHits);
-  console.log("Lookup misses: " + lookupMisses);
 }
 
+function lsign(x) {
+  // squarish circle
+  // angle = x - x ** 3 / factorial(3) + x ** 5 / factorial(5);
+  // better
+  return (
+    x - x ** 3 / factorial(3) + x ** 5 / factorial(5) - x ** 7 / factorial(7)
+  );
+}
+
+function factorial(num) {
+  // much faster than recursive version
+  var rval = 1;
+  for (var i = 2; i <= num; i++) rval = rval * i;
+  return rval;
+}
 // initGraphics and PlotPixel based on https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Drawing_graphics
 function initGraphics() {
   canvas = document.querySelector(".circleExample");
