@@ -3,7 +3,7 @@ var ctx;
 var width;
 var height;
 var pointSize = 1;
-var angleStep = (2 * Math.PI) / 36; // 36 points per circle
+var angleStep = (2 * Math.PI) / 60; // 60 points per circle
 
 drawCircle(200);
 
@@ -13,14 +13,15 @@ function drawCircle(radius) {
   var angle = 0.0;
   var x = 0.0;
   var y = 0.0;
-  var t1 = performance.now();
-
+ 
   initGraphics();
   ctx.fillStyle = "rgb(30, 30, 30)";
   PlotAxis();
   ctx.fillStyle = "rgb(255, 30, 30)";
   // draw 1/8th of a cicrle then plot the other 7 symmetric points
-  while (angle < Math.PI / 4) {
+  var t1 = performance.now();
+  while (Math.PI / 4 > angle)
+  {
     y = lsin(angle) * radius;
     // cos (x) = sin(x+PI/2);
     x = lsin(angle + Math.PI / 2) * radius;
@@ -84,3 +85,4 @@ function PlotAxis() {
     y++;
   }
 }
+
