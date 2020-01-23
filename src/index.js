@@ -21,9 +21,10 @@ function drawCircle(radius) {
   ctx.fillStyle = "rgb(255, 30, 30)";
   // draw 1/8th of a cicrle then plot the other 7 symmetric points
   while (angle < Math.PI / 4) {
-    y = lsign(angle) * radius;
+    y = lsin(angle) * radius;
     // cos (x) = sin(x+PI/2);
-    x = lsign(angle + Math.PI / 2) * radius;
+    x = lsin(angle + Math.PI / 2) * radius;
+    angle = angle + angleStep;
     PlotPixel(width / 2 + x, height / 2 + y);
     PlotPixel(width / 2 - x, height / 2 + y);
     PlotPixel(width / 2 - x, height / 2 - y);
@@ -32,14 +33,13 @@ function drawCircle(radius) {
     PlotPixel(width / 2 - y, height / 2 + x);
     PlotPixel(width / 2 - y, height / 2 - x);
     PlotPixel(width / 2 + y, height / 2 - x);
-    angle = angle + angleStep;
   }
   var t2 = performance.now();
   console.log("done.");
   console.log("Rendering circle: " + (t2 - t1) + "ms");
 }
 
-function lsign(x) {
+function lsin(x) {
   // squarish circle
   // angle = x - x ** 3 / factorial(3) + x ** 5 / factorial(5);
   // better
